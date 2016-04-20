@@ -1,0 +1,9 @@
+extends: openstack
+env:
+  node: true
+  jasmine: true
+
+rules:
+  # Disabled: Because calling process.exit() when we want to 
+  # is why this module exists.
+  no-process-exit: 0

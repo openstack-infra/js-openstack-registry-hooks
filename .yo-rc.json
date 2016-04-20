@@ -1,0 +1,6 @@
+{
+  "generator-openstack": {
+    "projectName": "openstack-registry-hooks",
+    "enableGerrit": true
+  }
+}
