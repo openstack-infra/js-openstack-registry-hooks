@@ -1,7 +1,7 @@
 {
   "license": "Apache-2.0",
   "name": "openstack-registry-hooks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "registry-static procedural hooks for OpenStack's NPM mirror.",
   "main": "index.js",
   "dependencies": {},
