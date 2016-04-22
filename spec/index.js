@@ -52,9 +52,8 @@
     it('should noop on most methods', function () {
       var hooks = require('../index');
 
-      var methods = ['beforeAll', 'globalIndexJson', 'indexJson',
-                     'versionJson', 'tarball', 'afterTarball', 'startup',
-                     'shasumCheck'];
+      var methods = ['beforeAll', 'globalIndexJson', 'versionJson', 'tarball',
+                     'afterTarball', 'startup', 'shasumCheck'];
       methods.forEach(function (methodName) {
         var data = {};
         var cb = jasmine.createSpy('spy');
@@ -65,40 +64,58 @@
       });
     });
 
-    it('should noop on afterAll if the sequences do not match',
-      function () {
-        var hooks = require('../index');
+    describe('afterAll', function () {
+      it('should noop on afterAll if the sequences do not match',
+        function () {
+          var hooks = require('../index');
+          var cb = jasmine.createSpy('spy');
+          var data = {seq: 2, latestSeq: 20};
+
+          hooks.afterAll.call(boundScope, data, cb);
+
+          expect(procSpy).not.toHaveBeenCalled();
+          expect(cb).toHaveBeenCalledWith(null, true);
+        });
+
+      it('should not error if sequences are not defined',
+        function () {
+          var hooks = require('../index');
+          var cb = jasmine.createSpy('spy');
+          var data = {};
+
+          hooks.afterAll.call(boundScope, data, cb);
+
+          expect(procSpy).not.toHaveBeenCalled();
+          expect(cb).toHaveBeenCalledWith(null, true);
+        });
+
+      it('should process.exit() if sequences match',
+        function () {
+          var hooks = require('../index');
+          var cb = jasmine.createSpy('spy');
+          var data = {seq: 20, latestSeq: 20};
+
+          hooks.afterAll.call(boundScope, data, cb);
+
+          expect(procSpy).toHaveBeenCalledWith(0);
+        });
+    });
+
+    describe('indexJson', function () {
+      it('should sanitize versions', function () {
+        var shellJsData = require('./helpers/shelljs.json');
+        var oldKeys = Object.keys(shellJsData.json.versions);
         var cb = jasmine.createSpy('spy');
-        var data = {seq: 2, latestSeq: 20};
 
-        hooks.afterAll.call(boundScope, data, cb);
+        expect(oldKeys).toContain('0.0.1alpha1');
 
-        expect(procSpy).not.toHaveBeenCalled();
-        expect(cb).toHaveBeenCalledWith(null, true);
+        var indexJsonHook = require('../lib/index_json');
+        indexJsonHook(shellJsData, cb);
+        var newKeys = Object.keys(shellJsData.json.versions);
+
+        expect(newKeys).toContain('0.0.1-alpha1');
+        expect(newKeys).not.toContain('0.0.1alpha1');
       });
-
-    it('should not error if sequences are not defined',
-      function () {
-        var hooks = require('../index');
-        var cb = jasmine.createSpy('spy');
-        var data = {};
-
-        hooks.afterAll.call(boundScope, data, cb);
-
-        expect(procSpy).not.toHaveBeenCalled();
-        expect(cb).toHaveBeenCalledWith(null, true);
-      });
-
-    it('should process.exit() if sequences match',
-      function () {
-        var hooks = require('../index');
-        var cb = jasmine.createSpy('spy');
-        var data = {seq: 20, latestSeq: 20};
-
-        hooks.afterAll.call(boundScope, data, cb);
-
-        expect(procSpy).toHaveBeenCalledWith(0);
-      });
-
+    });
   });
 })();

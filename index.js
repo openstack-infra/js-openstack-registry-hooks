@@ -34,7 +34,7 @@
     /**
      * Called before writing a package's main index.json.
      */
-    indexJson: noop,
+    indexJson: require('./lib/index_json'),
 
     /**
      * Called before writing the index.json for a particular package version.

@@ -4,6 +4,9 @@ AFS-based NPM mirrors. It is maintained by OpenStack's Infrastructure team.
 
 ## Provided Hooks
 
+#### indexJson
+The official skimdb mirror (which we're supposed to use) contains older documents which do not match the SemVer specification. In order to ensure that the documents that we mirror match those available on registry.npmjs.org, this hook passes them through npm's `normalize-registry-metadata` package for sanitation.
+
 #### afterAll
 After each package is processed, the script will check the overall 
 synchronization status of the mirror. If it detects that the mirror is up to 
